@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="nz.ac.auckland.ivs.goproremotetimer.MainActivity">
+    <item
+        android:id="@+id/action_exit"
+        android:orderInCategory="200"
+        android:title="@string/action_exit"
+        app:showAsAction="never" />
+</menu>
