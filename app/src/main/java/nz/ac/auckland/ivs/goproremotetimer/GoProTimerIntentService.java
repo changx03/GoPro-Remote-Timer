@@ -35,17 +35,19 @@ public class GoProTimerIntentService extends IntentService {
                 if (timer_value == 0) {
                     // to nothing
                     System.out.println("GoProRemoteTimer_GoProTimerIntentService_timer_value = " + timer_value + ". Switch off");
-                } else if (timer_value > 0 && timer_value <= 8000) {
+                } else if (timer_value > 0 && timer_value <= 20000) {
                     // TODO: always on
                     sendHttpRequest(uriCapture);
                     SystemClock.sleep(timer_value);
                 } else {    // timer_value > 6s
                     sendHttpRequest(uriSwitchOn);
-                    SystemClock.sleep(5000);
+                    Thread.sleep(1000);
+                    sendHttpRequest(uriSwitchOn);
+                    Thread.sleep(9000);
                     sendHttpRequest(uriCapture);
-                    SystemClock.sleep(3000);
+                    Thread.sleep(10000);
                     sendHttpRequest(uriSwitchOff);
-                    SystemClock.sleep(timer_value - 8000);
+                    Thread.sleep(timer_value - 20000);
                 }
             }
         } catch (Exception e) {
