@@ -15,7 +15,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Connect to the GoPro device via Wi-Fi and switch it on before any action!"
+        android:text="@string/note"
         android:textSize="@dimen/hit_textSize"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
@@ -32,13 +32,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_below="@+id/textView"
             android:baselineAligned="false">
 
             <TextView
                 android:layout_width="68dp"
                 android:layout_height="match_parent"
-                android:text="Password:"
+                android:text="@string/pass1"
                 android:id="@+id/textView2"
                 android:gravity="center_vertical" />
 
@@ -50,26 +49,50 @@
                 android:id="@+id/edTxt_Password"
                 android:layout_gravity="center_horizontal"
                 android:singleLine="true"
-                android:hint="Same as Wi-Fi password"
-                android:textSize="14dp" />
+                android:hint="@string/pass2"
+                android:textSize="14sp" />
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/Switch"
+                android:gravity="center_vertical" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/btn_off"
+                android:id="@+id/btn_SwitchOFF" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/btn_On"
+                android:id="@+id/btn_SwitchOn" />
         </LinearLayout>
 
         <Button
             android:layout_width="200dp"
             android:layout_height="50dp"
-            android:text="@string/switch_on"
-            android:id="@+id/btn_SwitchOnOFF"
-            android:layout_marginTop="5dp"
-            android:layout_gravity="center"/>
+            android:text="@string/switchTest"
+            android:id="@+id/btn_TestMode"
+            android:layout_gravity="center"
+            android:checked="false"
+            android:layout_marginTop="5dp"/>
 
-        <Button
-            android:layout_width="200dp"
-            android:layout_height="50dp"
-            android:text="Switch to Photo Mode"
-            android:id="@+id/btn_PhotoMode"
-            android:layout_marginTop="5dp"
-            android:layout_gravity="center"/>
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/switchScreen"
+            android:id="@+id/switchStayAwake"
+            android:layout_gravity="center"
+            android:checked="false"
+            android:layout_marginTop="5dp"/>
 
         <NumberPicker
             android:layout_width="wrap_content"
@@ -81,7 +104,7 @@
         <Button
             android:layout_width="200dp"
             android:layout_height="50dp"
-            android:text="Timer Update"
+            android:text="@string/tmrUpdate"
             android:id="@+id/btn_TmrUpdate"
             android:layout_marginTop="5dp"
             android:layout_gravity="center"/>
@@ -89,7 +112,7 @@
         <Button
             android:layout_width="200dp"
             android:layout_height="50dp"
-            android:text="Shut Down timer"
+            android:text="@string/ShutDownTmr"
             android:id="@+id/btn_ShutDownTmr"
             android:layout_marginTop="5dp"
             android:layout_gravity="center"/>

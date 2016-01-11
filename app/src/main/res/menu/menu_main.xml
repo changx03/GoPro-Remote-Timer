@@ -3,6 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="nz.ac.auckland.ivs.goproremotetimer.MainActivity">
     <item
+        android:id="@+id/action_setting"
+        android:orderInCategory="100"
+        android:title="@string/action_setting"
+        app:showAsAction="never"
+        />
+
+    <item
         android:id="@+id/action_exit"
         android:orderInCategory="200"
         android:title="@string/action_exit"

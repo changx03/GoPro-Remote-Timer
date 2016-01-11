@@ -5,21 +5,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.text.InputType;
-import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.NumberPicker;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int SWITCH_ON = 1;
     public static final int SWITCH_OFF = 0;
     public static final int PHOTO_MODE = 2;
+    public static final int CAPTURE = 3;
 
     // For SharedPreferences
     private int timer_value;
@@ -89,40 +92,91 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final Button btnSwitch = (Button) findViewById(R.id.btn_SwitchOnOFF);
-        btnSwitch.setTag(1);
-        btnSwitch.setText(R.string.switch_on);
-        btnSwitch.setOnClickListener(new View.OnClickListener() {
+        final Button btnSwitchOff = (Button) findViewById(R.id.btn_SwitchOFF);
+//        btnSwitch.setTag(1);
+//        btnSwitch.setText(R.string.switch_on);
+        btnSwitchOff.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                final int status = (Integer) v.getTag();
-                if (status == 1) {
-                    // TODO: switch on
-                    String passing = String.valueOf(SWITCH_ON);
-                    new SendURL2GoPro().execute(passing);
-                    btnSwitch.setText(R.string.switch_off);
-                    v.setTag(0);
-                    toast("Waiting for GoPro switching on");
-                } else {
-                    // TODO: switch off
-                    String passing = String.valueOf(SWITCH_OFF);
-                    new SendURL2GoPro().execute(passing);
-                    btnSwitch.setText(R.string.switch_on);
-                    v.setTag(1);
-                    toast("Waiting for GoPro switching off");
-                }
+//                final int status = (Integer) v.getTag();
+//                if (status == 1) {
+//                    // TODO: switch on
+//                    String passing = String.valueOf(SWITCH_ON);
+//                    new SendURL2GoPro().execute(passing);
+//                    btnSwitch.setText(R.string.switch_off);
+//                    v.setTag(0);
+//                    toast("Waiting for GoPro switching on");
+//                } else {
+//                    // TODO: switch off
+//                    String passing = String.valueOf(SWITCH_OFF);
+//                    new SendURL2GoPro().execute(passing);
+//                    btnSwitch.setText(R.string.switch_on);
+//                    v.setTag(1);
+//                    toast("Waiting for GoPro switching off");
+//                }
+                // TODO: switch off
+                String passing = String.valueOf(SWITCH_OFF);
+                new SendURL2GoPro().execute(passing);
+                toast("Waiting for GoPro switching off");
             }
         });
 
-        final Button btnPhotoMode = (Button) findViewById(R.id.btn_PhotoMode);
-        btnPhotoMode.setOnClickListener(new View.OnClickListener() {
+        final Button btnSwitchOn = (Button) findViewById(R.id.btn_SwitchOn);
+        btnSwitchOn.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                String passing = String.valueOf(PHOTO_MODE);
+                String passing = String.valueOf(SWITCH_ON);
                 new SendURL2GoPro().execute(passing);
-                toast("Waiting for GoPro switching to Photo Mode");
+                toast("Waiting for GoPro switching on");
+            }
+        });
+
+        // Removed function!
+//        final Button btnPhotoMode = (Button) findViewById(R.id.btn_PhotoMode);
+//        btnPhotoMode.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                String passing = String.valueOf(PHOTO_MODE);
+//                new SendURL2GoPro().execute(passing);
+//                toast("Waiting for GoPro switching to Photo Mode");
+//            }
+//        });
+
+        // test mode: keep send http to GoPro without background service or turn off
+        final Button switchTest = (Button) findViewById(R.id.btn_TestMode);
+        switchTest.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                toast("Test Started...");
+                String passing = String.valueOf(CAPTURE);
+                new SendUrl2GoProTest().execute(passing);
+                toast("Test is running in background. It should took 5 photos after 10s");
+        }
+        });
+
+        // Wi-Fi will be kept active, and will behave normally
+        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        final WifiManager.WifiLock lock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "LockTag");
+        // Wifi awake on/off switch
+        final Switch switchWifi = (Switch) findViewById(R.id.switchStayAwake);
+        switchWifi.setChecked(false);
+        switchWifi.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (isChecked) {
+                    lock.acquire();
+                    toast("Wifi keep awake is currently ON");
+                } else {
+                    lock.release();
+                    toast("Wifi keep awake is currently OFF");
+                }
+
             }
         });
 
@@ -139,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final Intent intent  = new Intent(this, GoProTimerIntentService.class);
+        final Intent intent = new Intent(this, GoProTimerIntentService.class);
 
         final Button btnTimerUpdate = (Button) findViewById(R.id.btn_TmrUpdate);
         btnTimerUpdate.setOnClickListener(new View.OnClickListener() {
@@ -281,6 +335,9 @@ public class MainActivity extends AppCompatActivity {
                 case PHOTO_MODE:
                     mUri = URI_PHOTO_MODE;
                     break;
+                case CAPTURE:
+                    mUri = URI_CAPTURE;
+                    break;
                 default:
                     mUri = URI_SWITCH_OFF;
                     break;
@@ -298,6 +355,38 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    class SendUrl2GoProTest extends AsyncTask<String, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(String... passing) {
+            String passed = passing[0];
+            return triggerUrl(passed);
+        }
+
+        private Boolean triggerUrl(String passed) {
+            String mUri = "";
+            if(Integer.valueOf(passed) == CAPTURE) {
+                mUri = URI_CAPTURE;
+                for (int i = 0; i < 5; i++) {
+                    sendUrl(mUri);
+                    SystemClock.sleep(2000);
+                }
+            }
+            return true;
+        }
+
+        private void sendUrl(String uri) {
+            try {
+                URL url = new URL(uri);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                int status = httpURLConnection.getResponseCode();
+                httpURLConnection.disconnect();
+                System.out.println("GoProRemoteTimer_MainActivity_status = " + status);
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
     public void toast(CharSequence text) {
         Context context = getApplicationContext();
         int duration = Toast.LENGTH_SHORT;
@@ -311,12 +400,12 @@ public class MainActivity extends AppCompatActivity {
 
         Iterator<ActivityManager.RunningAppProcessInfo> iter = runningAppProcesses.iterator();
 
-        while(iter.hasNext()){
+        while (iter.hasNext()) {
             ActivityManager.RunningAppProcessInfo next = iter.next();
 
             String pricessName = getPackageName() + ":GoProService";
 
-            if(next.processName.equals(pricessName)){
+            if (next.processName.equals(pricessName)) {
                 android.os.Process.killProcess(next.pid);
                 break;
             }
